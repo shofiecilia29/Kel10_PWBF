@@ -44,8 +44,9 @@
                                         <a href ="{{route('admin.categories.edit',$category->id)}}" class="btn btn-info">
                                             <i class="fa fa-pencil-alt"></i>
                                         </a>
-                                        <form action ="{{route('admin.categories.destroy',$category->id)}}" method="post">
+                                        <form onclick="return confirm('Apakah anda yakin ?') " action ="{{route('admin.categories.destroy',$category->id)}}" method="post">
                                             @csrf
+                                            @method('DELETE')
                                             <button type='submit' class="btn btn-dager"><i class="fa fa-trash"></i></button>
                                         </form>
                                     </div>

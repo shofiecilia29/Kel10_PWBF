@@ -25,7 +25,7 @@ class CategoryController extends Controller
      */
     public function create()
     {
-        $categories = Category::all()->pluck('name','id');
+        $categories = Category::whereNull('category_id')->pluck('name','id');
         return view('admin.categories.create',compact('categories'));
     }
 
@@ -59,7 +59,8 @@ class CategoryController extends Controller
      */
     public function edit(Category $category)
     {
-        return view('admin.categories.edit', compact('category'));
+        $categories = Category::whereNull('category_id')->pluck('name','id');
+        return view('admin.categories.edit', compact('category','categories'));
     }
 
     /**
@@ -68,6 +69,13 @@ class CategoryController extends Controller
     public function update(CategoryRequest $request, Category $category )
     {
         $category->update($request->validated());
+
+        if ($request->input('photo',false)) {
+            if (!$category->photo || $request-> input('photo') !== $category->photo->file_name) {
+                isset($category->photo) ? $category->photo->delete(): null;
+                $category->addMedia(storage_path('tmp/uploads/'). $request->input('photo'))->toMediaCollection('photo'); 
+            }
+        }
 
         return redirect()->route('admin.categories.index')->with(['
         message' => 'Sukses Update !',

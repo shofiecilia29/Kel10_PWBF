@@ -19,11 +19,23 @@ class CategoryRequest extends FormRequest
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array|string>
      */
-    public function rules(): array
+    public function rules()
     {
-        return [
-            'name' => 'required',
-            'category_id' => 'nullable'
-        ];
+        switch($this->method()){
+            case "POST":
+
+            return [
+                'name' => ['required', 'unique:categories'],
+                'category_id' => 'nullable'
+            ];
+            case "PUT":
+            case "PATCH":
+            return [
+                'name' => ['required', 'unique:categories,name,' . $this->route()->category->id],
+                'category_id' => 'nullable'
+            ];
+            default: break;
+        }
+        
     }
 }
