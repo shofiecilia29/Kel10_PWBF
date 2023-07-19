@@ -3,16 +3,21 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Http\Controllers\Traits\ImageUploading;
+use App\Http\Requests\Admin\CategoryRequest;
+use App\Models\Category;
 
 class CategoryController extends Controller
 {
+    use ImageUploading;
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        //
+       $categories = Category::all();
+       return view('admin.categories.index',compact('categories'));
     }
 
     /**
@@ -20,15 +25,25 @@ class CategoryController extends Controller
      */
     public function create()
     {
-        //
+        $categories = Category::all()->pluck('name','id');
+        return view('admin.categories.create',compact('categories'));
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(CategoryRequest $request)
     {
-        //
+        $category = Category::create($request->validated());
+
+        if($request->input('photo',false)){
+            $category->addMedia(storage_path('tmp/uploads/'). $request->input('photo'))->toMediaCollection('photo');
+
+        }
+
+        return redirect()->route('admin.categories.index')->with(['message' => 'Sukses Membuat Kategori Baru',
+        'type'=> 'success'
+    ]);
     }
 
     /**
@@ -42,24 +57,32 @@ class CategoryController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Category $category)
     {
-        //
+        return view('admin.categories.edit', compact('category'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(CategoryRequest $request, Category $category )
     {
-        //
+        $category->update($request->validated());
+
+        return redirect()->route('admin.categories.index')->with(['
+        message' => 'Sukses Update !',
+        'type' => 'info'
+    ]);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Category $category)
     {
-        //
+        return redirect()->back()->with([
+            'message' => 'Delete Sukses !',
+            'type' => 'danger'
+        ]);
     }
 }
