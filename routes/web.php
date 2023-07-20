@@ -25,9 +25,12 @@ Route::get('/order/checkout',[\App\Http\Controllers\OrderController::class, 'pro
 Route::group(['middleware' => ['auth','isAdmin'],'prefix' => 'admin', 'as' => 'admin.'], function(){
     Route::get('/',[\App\Http\Controllers\Admin\DashboardController::class,'index'])->name('dashboard');
     
+    //categories
     Route::resource('categories',\App\Http\Controllers\Admin\CategoryController::class);
     Route::post('categories/image',[\App\Http\Controllers\Admin\CategoryController::class,'storeImage'])->name('categories.storeImage');
 
+    //tags
+    Route::resource('tags', \App\Http\Controllers\Admin\TagController::class);
 });
 
     
