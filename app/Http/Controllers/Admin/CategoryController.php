@@ -59,8 +59,9 @@ class CategoryController extends Controller
      */
     public function edit(Category $category)
     {
-        $categories = Category::whereNull('category_id')->pluck('name','id');
-        return view('admin.categories.edit', compact('category','categories'));
+        $categories = Category::whereNull('category_id')->pluck('name', 'id');
+
+        return view('admin.categories.edit', compact('category', 'categories'));
     }
 
     /**
@@ -74,6 +75,8 @@ class CategoryController extends Controller
             if (!$category->photo || $request-> input('photo') !== $category->photo->file_name) {
                 isset($category->photo) ? $category->photo->delete(): null;
                 $category->addMedia(storage_path('tmp/uploads/'). $request->input('photo'))->toMediaCollection('photo'); 
+            } else if($category->photo){
+                $category->photo->delete();
             }
         }
 
@@ -88,6 +91,8 @@ class CategoryController extends Controller
      */
     public function destroy(Category $category)
     {
+        $category->delete();
+
         return redirect()->back()->with([
             'message' => 'Delete Sukses !',
             'type' => 'danger'
