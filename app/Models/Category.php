@@ -43,9 +43,9 @@ class Category extends Model implements HasMedia
         return $this->getMedia('photo')->first();
     }
 
-    // public function products(){
-    //     return $this->hasMany(Product::class);
-    // }
+    public function products(){
+        return $this->hasMany(Product::class);
+    }
 
 
 }
