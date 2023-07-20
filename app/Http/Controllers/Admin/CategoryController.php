@@ -71,14 +71,14 @@ class CategoryController extends Controller
     {
         $category->update($request->validated());
 
-        if ($request->input('photo',false)) {
-            if (!$category->photo || $request-> input('photo') !== $category->photo->file_name) {
-                isset($category->photo) ? $category->photo->delete(): null;
-                $category->addMedia(storage_path('tmp/uploads/'). $request->input('photo'))->toMediaCollection('photo'); 
-            } else if($category->photo){
+        if($request->input('photo', false)){
+            if(!$category->photo || $request->input('photo') !== $category->photo->file_name){
+                isset($category->photo) ? $category->photo->delete() : null;
+                $category->addMedia(storage_path('tmp/uploads/') . $request->input('photo'))->toMediaCollection('photo');
+            } 
+        }else if($category->photo){
                 $category->photo->delete();
             }
-        }
 
         return redirect()->route('admin.categories.index')->with(['
         message' => 'Sukses Update !',
