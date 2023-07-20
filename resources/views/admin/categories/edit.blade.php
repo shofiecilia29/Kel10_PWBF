@@ -1,88 +1,74 @@
-@extends('layouts/admin')
+@extends('layouts.admin')
 
 @section('content')
-    <div class="contrainer">
-        <div class= "card">
-            <div class= "card-header">
-                <h3>Edit Kategori</h3>
-                <a href= "{{route('admin.categories.index')}}" class="btn btn-primary float-right">
-                    Kembali
-                </a>
+        <div class="card">
+            <div class="card-header">
+                <h3>Edit Category
+                    <a href="{{ route('admin.categories.index') }}" class="btn btn-primary float-right">
+                        Go Back
+                    </a>
+                </h3>     
             </div>
             <div class="card-body">
-                <form action="{{route('admin.categories.update', $category->id)}}" method="post" >
-                    @csrf
-                    @method('PUT')
-                    <div class = "form-group">
-                        <label for="name">Nama</label>
-                        <input type="text" name="name" value="{{old('name',$category->name)}}" class="form-control">
-
-                        <!-- @error('nama_menu')
-                        <span class= "invalid-feedback" role="alert">
-                            <strong>{{ $message }}</strong>
-                        </span>
-                        @enderror -->
+                <form action="{{ route('admin.categories.update', $category->id) }}" method="post">
+                    @csrf 
+                    @method('put')
+                    <div class="form-group">
+                        <label for="name">Name</label>
+                        <input type="text" name="name" class="form-control" value="{{ old('name', $category->name) }}">
                     </div>
+                    <div class="form-group {{ $errors->has('photo') ? 'has-error' : '' }}">
+                        <label for="photo">Photo</label>
+                        <div class="needsclick dropzone" id="photo-dropzone">
 
-                    <div class = "form-group">
+                        </div>
+                        @if($errors->has('photo'))
+                            <em class="invalid-feedback">
+                                {{ $errors->first('photo') }}
+                            </em>
+                        @endif
+                    </div>
+                    <div class="form-group">
                         <label for="parent">Parent</label>
                         <select name="category_id" class="form-control">
-                            <option value=" " >-- Default --</option>
+                            <option value="">-- Default --</option>
                             @foreach($categories as $id => $categoryName)
-                            <option {{  $category->category_id === $id ? 'selected' : null }} value="{{$id}}">{{$categoryName}}</option>
+                                <option {{ $category->category_id  === $id  ? 'selected' : null }} value="{{ $id }}">{{ $categoryName }}</option>
                             @endforeach
                         </select>
-
-                        <!-- @error('nama_menu')
-                        <span class= "invalid-feedback" role="alert">
-                            <strong>{{ $message }}</strong>
-                        </span>
-                        @enderror -->
                     </div>
-
-                    <div class = "form-group">
-                        <label for="photo">photo</label>
-                        <div class="needsclick dropzone" id="photo-dropzone"></div>
-
-                        <!-- @error('nama_menu')
-                        <span class= "invalid-feedback" role="alert">
-                            <strong>{{ $message }}</strong>
-                        </span>
-                        @enderror -->
-                    </div>
-
                     <div class="form-group">
-                        <button type="submit" class="btn btn-primary mt-3">Save</button>
+                        <button type="submit" class="btn btn-primary">Save</button>
                     </div>
                 </form>
-    </div>
-
+            </div>
 @endsection
+
 @push('style-alt')
 <link rel="stylesheet" href="https://unpkg.com/dropzone@5/dist/min/dropzone.min.css" type="text/css" />
 @endpush
 
-@push('script-alt')
+@push('script-alt')   
 <script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js"></script>
-<script>
+    <script>
     Dropzone.options.photoDropzone = {
-            url: "{{ route('admin.categories.storeImage') }}",
-            acceptedFiles: '.jpeg,.jpg,.png,.gif',
-            maxFiles: 1,
-            addRemoveLinks: true,
+        url: "{{ route('admin.categories.storeImage') }}",
+        acceptedFiles: '.jpeg,.jpg,.png,.gif',
+        maxFiles: 1,
+        addRemoveLinks: true,
         headers: {
-            'X-CSRF-TOKEN': "{{ csrf_token() }}"
+        'X-CSRF-TOKEN': "{{ csrf_token() }}"
         },
         success: function (file, response) {
-            $('form').find('input[name="photo"]').remove()
-            $('form').append('<input type="hidden" name="photo" value="' + response.name + '">')
+        $('form').find('input[name="photo"]').remove()
+        $('form').append('<input type="hidden" name="photo" value="' + response.name + '">')
         },
         removedfile: function (file) {
-            file.previewElement.remove()
-            if (file.status !== 'error') {
-                $('form').find('input[name="photo"]').remove()
-                this.options.maxFiles = this.options.maxFiles + 1
-            }
+        file.previewElement.remove()
+        if (file.status !== 'error') {
+            $('form').find('input[name="photo"]').remove()
+            this.options.maxFiles = this.options.maxFiles + 1
+        }
         },
         init: function () {
             @if(isset($category) && $category->photo)
