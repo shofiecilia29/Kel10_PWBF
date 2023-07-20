@@ -9,4 +9,8 @@ class ShopController extends Controller
     public function index($slug = null){
         return view('frontend.shop.index');
     }
+
+    public function tag(){
+        return view('frontend.shop.index');
+    }
 }
